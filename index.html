@@ -20,34 +20,123 @@
         transform-origin: 0 0;
       }
       .site-top-bar-close {
-        transform: translateY(-100%);
+        transform: translateY(-100px);
       }
       #site-top-bar {
-        background: #212b58;
+        background: #28346a;
         height: 100px;
         width: 100%;
         transition: transform 0.3s ease;
         left: 0;
         top: 0;
+        align-items: center;
+        display: flex;
       }
       #site-top-bar-button {
         transition: transform 0.3s ease;
         border: none;
         background-color: transparent;
-        margin: 20px;
+        height: 50px;
       }
       .site-top-bar-div {
         display: flex;
         flex-direction: column;
+        position: absolute;
+        width: 100%;
+      }
+      .button {
+        position: relative;
+        margin: 0;
+        padding: 8px 18px;
+        background-color: #112052;
+        border: none;
+        clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        color: white;
+        font-size: 32px;
+        pointer-events: auto;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        font-family: 'FORCEDSQUARE';
+        margin: 20px;
+      }
+      .site-element-creation {
+        display: flex;
+        position: absolute;
+        height: 80%;
+        width: 50%;
+        left: 25%;
+        top: 15%;
+        background: #212b58;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: scroll;
+        pointer-events: auto;
+      }
+      .site-element-creation-top {
+        width: 100%;
+        background: #28346a;
+        height: 70px;
+        color: white;
+        text-align: center;
+        align-content: center;
+        font-size: 30px;
+      }
+      .site-dropdown {
+        font-size: 20px;
+        font-family: 'ForcedSquare';
+        margin: 0 150px 0 auto;
+        color: white;
+        background: #112052;
+        border: none;
+        clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        padding: 0 30px;
+        height: 55px;
+      }
+      .site-input {
+        font-size: 20px;
+        font-family: 'ForcedSquare';
+        margin: 0 100px 0 auto;
+        color: white;
+        background: #112052;
+        border: none;
+        clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        padding: 0 30px;
+        height: 50px;
+        width: 200px;
+      }
+      .color-bar-div {
+        font-size: 20px;
+        margin: 0 50px 0 auto;
+        color: white;
+        border: none;
+        padding: 0 30px;
+        height: 80px;
+        width: 300px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .overflow-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     </style>
   </head>
   <body>
     <div id="site-ui">
       <div class="site-top-bar-div">
-        <div id="site-top-bar"></div>
+        <div id="site-top-bar">
+          <button id="site-element-create-button" class="button" style="font-size: 30px;">Create Element</button>
+        </div>
         <button id="site-top-bar-button">^^^</button>
       </div>
+      <div id="project-ui"></div>
     </div>
     <script src="main.js"></script>
   </body>
