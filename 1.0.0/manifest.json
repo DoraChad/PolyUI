@@ -1,9 +1,9 @@
 {
     "polymod": {
-        "name": "",
-        "id": "",
-        "author": "",
-        "targets": ["0.5.1"],
+        "name": "Poly UI",
+        "id": "pui",
+        "author": "DoraChad",
+        "targets": ["0.5.2"],
         "main": "main.mod.js"
     },
     "dependencies": []
