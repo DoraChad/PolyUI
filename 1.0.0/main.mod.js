@@ -4,6 +4,14 @@ const ElementStack = {
     stack: [],
     
     currentAtDepth(depth = null) {
+        if (this.stack.length === 0) {
+            console.error("[PUI]: Stack error — no element found at requested depth", {
+                requestedDepth: depth,
+                stackDepth: this.stack.length
+            });
+            return null;
+        }
+        
         if (depth === null) {
             return this.stack[this.stack.length - 1]?.wrapper || null;
         };
@@ -15,10 +23,22 @@ const ElementStack = {
     },
     
     push(wrapper, depth) {
+        if (this.stack.length > 500) {
+            console.warn("[PUI] Stack warning — stack depth exceeded 500 levels. Your stack should not be this deep bro.", {
+                currentDepth: depth
+            });
+        }
+        
         this.stack.push({ wrapper, depth });
     },
 
     popToDepth(depth) {
+        if (this.stack.length === 0) {
+            console.error("[PUI] Stack error — attempted to pop from an empty ElementStack", {
+                depth
+            });
+        }
+                          
         while (this.stack.length > 0 && this.stack[this.stack.length - 1].depth > depth) {
             this.stack.pop();
         }
@@ -38,6 +58,15 @@ class ElementHandler {
 
     _append(element, depthOffset = 1) {
         const parent = ElementStack.currentAtDepth(this.depth);
+
+        if (!parent) {
+            console.error("[PUI] Failed to append — no parent element is available.", {
+                depth: this.depth,
+                attemptedElement: element
+            });
+            return this;
+        }
+        
         
         parent.el.appendChild(element);
 
@@ -46,19 +75,6 @@ class ElementHandler {
 
         return handler;
     };
-
-    button(text) {
-        const button = document.createElement("button");
-
-        if (text) {
-            const textEl = document.createElement("p");
-            textEl.textContent = text;
-
-            button.appendChild(textEl);
-        }
-
-        return this._append(button);
-    }
     
     background(color) {
         const target = ElementStack.currentAtDepth(this.depth);
@@ -85,35 +101,49 @@ const elementPresets = {
     }
 };
 
-
-for (const [name, fn] of Object.entries(elementPresets)) {
-
-    ElementHandler.prototype[name] = function(...args) {
-        return fn(this, ...args);
-    };
-}
-
-const API = {
+class PUI extends PolyMod {
     build(root, fn) {
+
+        if (!root || !root instanceof HTMLElement) {
+            console.error("[PUI] Cannot start build — given root is not a valid DOM element", {
+                received: root
+            });
+            return;
+        }
+        
         const handler = new ElementHandler(root, 0);
         ElementStack.push(handler, 0);
         fn();
         ElementStack.clear();
-    }
-};
-
-for (const [name, fn] of Object.entries(elementPresets)) {
-    API[name] = function(...args) {
-        const parent = ElementStack.currentAtDepth();
-        return fn(parent, ...args);
+    };
+    
+    init = (pml) => {
+        pml.registerFuncMixin("polyInitFunction", MixinType.INSERT, "{", `window.PUI = ActivePolyModLoader.getMod("pui");console.log(window.PUI)`);
     };
 }
 
-class PUI extends PolyMod {
-    init = (pml) => {
-        pml.registerFuncMixin("polyInitFunction", MixinType.HEAD, "window.PUI = ActivePolyModLoader.getMod('pui').API");
-    }
+for (const [name, fn] of Object.entries(elementPresets)) {
+    ElementHandler.prototype[name] = function(...args) {
+        return fn(this, ...args);
+    };
+
+    PUI.prototype[name] = function (...args) {
+        if (!ElementStack.stack.length) {
+            console.error("[PUI] Cannot create UI element — build() has not been called.");
+            return;
+        }
+    
+        ElementStack.popToDepth(0);
+    
+        const rootParent = ElementStack.stack[0].wrapper;
+        return fn(rootParent, ...args);
+    };
+
+
+
 }
+
+
 
 
 export let polyMod = new PUI();
