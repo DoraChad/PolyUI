@@ -62,7 +62,9 @@ class ElementHandler {
     
     background(color) {
         const target = ElementStack.currentAtDepth(this.depth);
-        (target?.el)?.style.background = color;
+        if (target?.el) {
+            target.el.style.background = color;
+        }
         return this;
     }
 }
